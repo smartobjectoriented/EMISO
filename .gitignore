@@ -36,6 +36,9 @@ agency/rootfs/build/**
 agency/rootfs/host/**
 agency/rootfs/images/**
 agency/rootfs/target/**
+agency/rootfs/board/**/rootfs.cpio
+agency/rootfs/board/**/rootfs.cpio.backup
+agency/rootfs/staging
 
 
 # except the followings:
@@ -46,4 +49,6 @@ agency/rootfs/target/**
 !agency/rootfs/*.mk
 !agency/rootfs/package/**
 !agency/rootfs/board/**/*.d
+
+agency/rootfs/.br2-external.mk
 
