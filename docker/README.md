@@ -1,6 +1,5 @@
 This folder contains a `Dockerfile` made to ease the compilation of the whole SOO framework.
 
-
 ## Build the image
 
 To build the Docker image, simple execute the following command:
@@ -34,3 +33,16 @@ Then, `ssh` into the Docker container: `ssh reds@172.17.0.X`. The password is `r
 ## Killing the container
 
 When you are done with compiling, you can simply kill the container by executing the command `docker kill soo-buildenv`.
+
+
+## Docker integration in rootfs
+
+Docker has been integrated in the rootfs.
+
+In case of problems, the `check-config.sh` can be used to check the kernel module
+needed for docker support has been activated or not
+
+**usage**
+
+	check-config.sh <DEFCONFIG FILE>
+
