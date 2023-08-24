@@ -13,9 +13,9 @@ and volumes without needing to use complex command-line tools.
 In the context of the EMISO project, *Portainer* will be employed and customized
 to extend its functionality in order to effectively support SO3 Containers.
 
-
-It is build in tow parts: *Portainer Server* which runs on the Host/control PC
-and a *Portainer-Agent* running in each *Smart Object*.
+*Portainer* consists of two parts: a Server and an Agent. Both run as lightweight
+containers. The *Portainer* Agent runs on the node in your cluster and communicates
+with the *Portainer* Server.
 
 ******
 Server
@@ -38,7 +38,7 @@ The *Portainer Server* can be started directly from a docker image.
 Agent
 *****
 
-The Agent is also deployed from a docker image, bellow is the docker run command
+The Agent is also deployed from a docker image, below is the docker run command
 to start it.
 
 .. code-block:: shell
@@ -57,7 +57,7 @@ command.
 After this initial setup, the *Portainer-agent* container is configured to be launched
 automatically at every system boot.
 
-All this steps are handled by ``S62Portainer`` ``init.d`` script.
+All these steps are handled by ``S62Portainer`` ``init.d`` script.
 
 The docker image is stored, in the target, at ``/root/docker_images/portainer_agent_image.zip``
 

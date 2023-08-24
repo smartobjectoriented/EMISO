@@ -39,7 +39,7 @@ When you are done with compiling, you can simply kill the container by executing
 
 Docker has been integrated in the rootfs.
 
-In case of problems, the `check-config.sh` can be used to check the kernel module
+In case of problems, the `check-config.sh` can be used to check if the kernel module
 needed for docker support has been activated or not
 
 **usage**

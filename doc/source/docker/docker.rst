@@ -12,17 +12,16 @@ Integration
 
 **Kernel**:
 
-To get the list of the kernel modules needed to
 The script ``check-config.sh`` serves the purpose of generating the list of the
 kernel modules required to enable Docker support.
 
 * Usage: ``check-config.sh <DEFCONFIG FILE>``
 
-This can is located in ``<EMISO HOME>/docker/`` folder.
+It is located in ``<EMISO HOME>/docker/`` folder.
 
 **rootfs**
 
-The following options have be enabled to add docker tool and engine in the rootfs:
+The following options have to be enabled to add docker tool and engine in the rootfs:
 
 .. code-block:: shell
 
