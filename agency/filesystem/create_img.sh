@@ -16,7 +16,7 @@ if [ "$1" == "vexpress" -o "$1" == "virt64"  ]; then
     echo Creating sdcard.img.$1 ... 
     
     if [ "$1" == "vexpress" -o "$1" == "rpi4" -o "$1" == "rpi4_64" -o "$1" == "virt64" ]; then
-        dd_size=1G
+        dd_size=3G
     else
         dd_size=400M
     fi
@@ -34,7 +34,7 @@ fi
 
 if [ "$1" == "vexpress" -o "$1" == "rpi4" -o "$1" == "rpi4_64" -o "$1" == "virt64" ]; then
 #create the partition layout this way
-    (echo o; echo n; echo p; echo; echo; echo +128M; echo t; echo c; echo n; echo p; echo; echo; echo +400M; echo n; echo p; echo; echo; echo +100M; echo n; echo p; echo; echo; echo; echo w)   | sudo fdisk /dev/"$devname";
+    (echo o; echo n; echo p; echo; echo; echo +128M; echo t; echo c; echo n; echo p; echo; echo; echo +2G; echo n; echo p; echo; echo; echo +100M; echo n; echo p; echo; echo; echo; echo w)   | sudo fdisk /dev/"$devname";
 fi
 
 echo Waiting...

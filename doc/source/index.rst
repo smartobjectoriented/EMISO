@@ -21,6 +21,8 @@
    architecture/architecture
    drivers/drivers
    rootfs/rootfs
+   docker/docker
+   portainer/portainer
    user_guide
    logging
    board_issues

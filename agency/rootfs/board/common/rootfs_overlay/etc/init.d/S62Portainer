@@ -1,0 +1,66 @@
+#!/bin/bash
+
+# Note: docker daemon is started from 'S60dockerd'
+
+function start_portainer()
+{
+    # Extartion of the image
+    unzip /root/docker_images/portainer_agent_image.zip
+
+    # load image
+    docker load -i portainer_agent_image.docker
+    rm portainer_agent_image.docker
+
+    # Execute image
+    docker run -d \
+      -p 9001:9001 \
+      --name portainer_agent \
+      --restart=always \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      -v /var/lib/docker/volumes:/var/lib/docker/volumes \
+      portainer/agent:2.18.4
+}
+
+do_start()
+{
+    # Check if docker is ready (it takes time to start)...
+    while true
+    do
+        status=$(docker container ls 2>&1)
+        if [ "$status" != *"Cannot connect to the Docker daemon"* ]; then
+            echo
+            break
+        fi
+    done
+
+    # Docker is running = but it takes a bit of time to start the Portainer-agent
+    # (if available) / wait some time before performs any checks
+    sleep 2
+
+    docker container ls | grep portainer/agent &> /dev/null
+    if [ ! $? -eq 0 ]; then
+        echo "Portainer-agent is not running !"
+
+        # Check if the image is loaded
+        docker image ls | grep portainer/agent &> /dev/null
+        if [ ! $? -eq 0 ]; then
+            echo "Load portainer-agent image and execute it"
+            start_portainer
+        else
+            echo "ERROR - Portainer-agent image is already loaded but not running !"
+        fi
+    else
+        echo "Portainer-agent container is running - all ok !"
+    fi
+}
+
+case "$1" in
+    start)
+        # Start portainer in background to avoid blocking boot process
+        do_start &
+        ;;
+    *)
+        ;;
+esac
+
+exit 0
