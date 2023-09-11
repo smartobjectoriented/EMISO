@@ -4,10 +4,16 @@
 #include <iostream>
 #include <httpserver.hpp>
 
+#if 0
+#define ENABLE_HTTPS
+#endif
+
+#define SERVER_PORT    2375
+
 class MyHandler : public httpserver::http_resource {
 public:
     const std::shared_ptr<httpserver::http_response> render(const httpserver::http_request& req) {
-        std::cout << "Received message on port 8080:" << std::endl;
+        std::cout << "Received message on port " << SERVER_PORT << ":" << std::endl;
         std::cout << "Method: " << req.get_method() << std::endl;
         std::cout << "Path: " << req.get_path() << std::endl;
         std::cout << "Headers:" << std::endl;
@@ -24,16 +30,20 @@ public:
 
 
 int main() {
-    httpserver::webserver server = httpserver::create_webserver(8080)
+    httpserver::webserver server = httpserver::create_webserver(SERVER_PORT)
+#ifdef ENABLE_HTTPS
         .use_ssl()
         .https_mem_key("key.pem")
         .https_mem_cert("cert.pem");
+#else
+    ;
+#endif
 
     // Create and add the handler
     MyHandler  handler;
     server.register_resource("^/.*$", &handler);
 
-    std::cout << "Server started on port 8080." << std::endl;
+    std::cout << "Server started on port " << SERVER_PORT << "." << std::endl;
 
     // Start the server
     server.start(true);
