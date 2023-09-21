@@ -31,5 +31,4 @@ add_subdirectory(lib)
 add_subdirectory(wago_client)
 
 # EMISO
-add_subdirectory(docker_images)
 add_subdirectory(emiso_engine)
