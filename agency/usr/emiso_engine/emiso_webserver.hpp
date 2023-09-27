@@ -4,6 +4,7 @@
 #define EMISO_WEBSERVER_H
 
 #include <httpserver.hpp>
+#include <json/json.h>
 
 
 class DefaultHandler : public httpserver::http_resource {
@@ -27,13 +28,26 @@ public:
 
 class PingHandler : public httpserver::http_resource {
 public:
-    const std::shared_ptr<httpserver::http_response> render(const httpserver::http_request& req) {
-        std::cout << "PING command " << std::endl;
 
-        // Respond with a simple message
-        auto response = std::make_shared<httpserver::string_response>("PING Message received!\n");
-        return response;
-    }
+	const std::shared_ptr<httpserver::http_response> render_GET(const httpserver::http_request &req) {
+		// Respond is a simple 'OK'
+    	auto response = std::make_shared<httpserver::string_response>("OK");
+    	return response;
+	}
+
+	const std::shared_ptr<httpserver::http_response> render_HEAD(const httpserver::http_request &req) {
+        // auto response = std::shared_ptr<httpserver::http_response>();
+        auto response = std::shared_ptr<httpserver::http_response>(new httpserver::string_response(""));
+
+        response->with_header("Api-Version",         "1.43");
+		response->with_header("Builder-Version",     "1.0");
+		response->with_header("Docker-Experimental", "false");
+		response->with_header("Swarm",               "inactive");
+		response->with_header("Cache-Control",       "no-cache, no-store, must-revalidate");
+		response->with_header("Pragma",              "no-cache");
+
+    	return response;
+	}
 };
 
 
