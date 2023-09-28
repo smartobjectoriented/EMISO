@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "emiso_webserver.hpp"
+#include "webserver.hpp"
 
 namespace emiso {
 
@@ -15,13 +15,15 @@ namespace emiso {
         // Create webserver using the configured options
         _server = new httpserver::webserver(cw);
 
-        // Create routes and handlers
-        _pinghandler    = new PingHandler();
-        _defaultHandler = new DefaultHandler();
-        _sysInfoHandler = new SysInfoHandler();
+        // Registration of the different APIs
+        _system    = new system::SytemApi(_server);
+        _container = new container::ContainerApi(_server);
+        _image     = new image::ImageApi(_server);
+        _network   = new network::NetworkApi(_server);
+        _volume    = new volume::VolumeApi(_server);
 
-        _server->register_resource("/_ping", _pinghandler);
-        _server->register_resource("/info",  _sysInfoHandler);
+        // Create the default path
+        _defaultHandler = new DefaultHandler();
         _server->register_resource("^/.*$",  _defaultHandler);
     }
 
