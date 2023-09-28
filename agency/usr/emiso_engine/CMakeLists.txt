@@ -10,6 +10,7 @@ add_executable(${PROJECT_NAME} emiso_engine.cpp
                                webserver/image/image.cpp
                                webserver/network/network.cpp
                                webserver/volume/volume.cpp
+                               webserver/config/config.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} httpserver jsoncpp)

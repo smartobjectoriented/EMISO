@@ -4,6 +4,9 @@
 #include <iostream>
 #include <httpserver.hpp>
 #include <json/json.h>
+#include <sys/utsname.h>
+
+#include "../config/config.hpp"
 
 namespace emiso {
     namespace system {
@@ -58,15 +61,40 @@ namespace emiso {
 
                 std::string payload_str = "";
                 Json::Value payload_json;
+                struct utsname unameData;
+                int response_code = httpserver::http::http_utils::http_ok;
 
-                payload_json["Platform"]["name"]  = "emiso";
-                payload_json["Version"] =         1;
+                if (uname(&unameData) != -1) {
+
+                    payload_json["Platform"]["name"] = config::plaftrom_name;
+                    payload_json["Components"][0]["name"]    = config::comp_name;
+                    payload_json["Components"][0]["version"] = config::version;
+                    payload_json["Version"]       = config::version;
+                    payload_json["ApiVersion"]    = config::api_version;
+                    payload_json["MinAPIVersion"] = config::api_version;
+
+                    // Get info directly from the system
+                    payload_json["Os"]   = unameData.sysname;
+                    payload_json["Arch"] = unameData.machine;
+                    payload_json["KernelVersion"] = unameData.release;
+
+                    payload_json["Experimental"] = config::experimental;
+
+                    // not implemented yet !
+                    // payload_json["GitCommit"]
+                    // payload_json["GoVersion"]
+                    // payload_json["BuildTime"]
+
+                } else {
+                    response_code = httpserver::http::http_utils::http_internal_server_error;
+                    payload_json["message"] = "Something went wrong";
+                }
 
                 Json::StreamWriterBuilder builder;
                 payload_str = Json::writeString(builder, payload_json);
 
                 auto response = std::make_shared<httpserver::string_response>(payload_str,
-                           httpserver::http::http_utils::http_ok, "application/json");
+                                                  response_code, "application/json");
                 return response;
             }
         };
