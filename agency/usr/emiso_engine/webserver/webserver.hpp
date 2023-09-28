@@ -24,7 +24,9 @@ public:
         std::cout << "Body: " << req.get_content() << std::endl;
 
         // Respond with a simple message
-        auto response = std::make_shared<httpserver::string_response>("Path '%s' not implemented\n", req.get_path());
+        std::string message = "Path '" + req.get_path() + "' not implemented\n";
+
+        auto response = std::make_shared<httpserver::string_response>(message);
         return response;
     }
 };
