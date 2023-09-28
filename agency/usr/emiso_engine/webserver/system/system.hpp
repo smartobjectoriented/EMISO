@@ -23,10 +23,13 @@ namespace emiso {
             const std::shared_ptr<httpserver::http_response> render_HEAD(const httpserver::http_request &req) {
                 auto response = std::shared_ptr<httpserver::http_response>(new httpserver::string_response(""));
 
-                response->with_header("Api-Version",         "1.43");
-                response->with_header("Builder-Version",     "1.0");
-                response->with_header("Docker-Experimental", "false");
-                response->with_header("Swarm",               "inactive");
+                response->with_header("Api-Version",         config::api_version);
+                response->with_header("Builder-Version",     config::version);
+                if (config::experimental)
+                    response->with_header("Docker-Experimental", "true");
+                else
+                    response->with_header("Docker-Experimental", "false");
+                response->with_header("Swarm",               config::swarm);
                 response->with_header("Cache-Control",       "no-cache, no-store, must-revalidate");
                 response->with_header("Pragma",              "no-cache");
 

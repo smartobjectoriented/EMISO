@@ -13,6 +13,7 @@ namespace emiso {
         static const std::string version;
         static const std::string api_version;
         static const bool        experimental;
+        static const std::string swarm;
     };
 }
 

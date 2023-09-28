@@ -8,4 +8,5 @@ namespace emiso {
     const std::string config::version = "1.0";
     const std::string config::api_version = "1.43";
     const bool config::experimental = false;
+    const std::string config::swarm = "inactive";
 }
