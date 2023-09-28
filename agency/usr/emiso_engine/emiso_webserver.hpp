@@ -25,7 +25,6 @@ public:
     }
 };
 
-
 class PingHandler : public httpserver::http_resource {
 public:
 
@@ -36,7 +35,6 @@ public:
 	}
 
 	const std::shared_ptr<httpserver::http_response> render_HEAD(const httpserver::http_request &req) {
-        // auto response = std::shared_ptr<httpserver::http_response>();
         auto response = std::shared_ptr<httpserver::http_response>(new httpserver::string_response(""));
 
         response->with_header("Api-Version",         "1.43");
@@ -50,6 +48,29 @@ public:
 	}
 };
 
+class SysInfoHandler : public httpserver::http_resource {
+public:
+
+	const std::shared_ptr<httpserver::http_response> render_GET(const httpserver::http_request &req) {
+
+		std::string payload_str = "";
+    	Json::Value payload_json;
+
+    	payload_json["ID"]         = "2ff11d3f-c408-493e-b170-908919f68044";
+    	payload_json["Containers"] = 2;
+
+    	Json::StreamWriterBuilder builder;
+    	payload_str = Json::writeString(builder, payload_json);
+
+    	std::cout << "Payload: " << std::endl;
+    	std::cout << payload_str << std::endl;
+    	std::cout << std::endl;
+
+		auto response = std::make_shared<httpserver::string_response>(payload_str,
+                   httpserver::http::http_utils::http_ok, "application/json");
+    	return response;
+	}
+};
 
 namespace emiso {
 
@@ -74,6 +95,7 @@ namespace emiso {
 
 	    // Handler for the different routes
 	    PingHandler     *_pinghandler;
+	    SysInfoHandler  *_sysInfoHandler;
 	    DefaultHandler  *_defaultHandler;
 
 	};

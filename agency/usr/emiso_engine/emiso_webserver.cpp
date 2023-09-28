@@ -18,9 +18,11 @@ namespace emiso {
         // Create routes and handlers
         _pinghandler    = new PingHandler();
         _defaultHandler = new DefaultHandler();
+        _sysInfoHandler = new SysInfoHandler();
 
-        _server->register_resource("^/.*$",  _defaultHandler);
         _server->register_resource("/_ping", _pinghandler);
+        _server->register_resource("/info",  _sysInfoHandler);
+        _server->register_resource("^/.*$",  _defaultHandler);
     }
 
     WebServer:: ~WebServer() {}
