@@ -15,5 +15,4 @@ add_executable(${PROJECT_NAME} emiso_engine.cpp
 
 target_link_libraries(${PROJECT_NAME} httpserver jsoncpp)
 
-#set(INSTALL_PATH ${CMAKE_BINARY_DIR}/root)
-#install(FILES ${PROJECT_NAME} DESTINATION ${INSTALL_PATH})
+install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_BINARY_DIR}/bin)
