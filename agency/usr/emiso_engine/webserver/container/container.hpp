@@ -17,8 +17,7 @@ namespace emiso {
                 std::string payload_str = "";
                 Json::Value payload_json;
 
-                payload_json["ID"]    = "2ff11d3f-c408-493e-b170-908919f68044";
-                payload_json["Image"] = "soo.refSO3";
+                payload_json = Json::arrayValue;
 
                 Json::StreamWriterBuilder builder;
                 payload_str = Json::writeString(builder, payload_json);

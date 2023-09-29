@@ -16,8 +16,16 @@ namespace emiso {
                 std::string payload_str = "";
                 Json::Value payload_json;
 
-                payload_json["ID"]       = "2ff11d3f-c408-493e-b170-908919f68044";
-                payload_json["ParentId"] = "";
+                // ID / Definition of a image ID should be performed. It depends on how portainer uses it !
+                payload_json[0]["ID"]       = "sha256:9c7a54a9a43cca047013b82af109fe963fde787f63f9e016fdc3384500c2823d";
+                payload_json[0]["ParentId"] = "";
+                payload_json[0]["RepoTags"][0] = "SOO.refso3"; // Define a name convention for the 'SO3 Container '
+                payload_json[0]["Created"] = 1644009612;  // Created time as returned by ls (number of seconds sinds EPOCH)
+                payload_json[0]["Size"] = 13256;  // // get size returned by ls
+                payload_json[0]["SharedSize"] = -1;  // Value not set or calculated
+                payload_json[0]["VirtualSize"] = 13256;
+                payload_json[0]["Containers"] = -1; // Value not set or calculated
+                payload_json[0]["Labels"][0] = Json::objectValue;
 
                 Json::StreamWriterBuilder builder;
                 payload_str = Json::writeString(builder, payload_json);
