@@ -13,6 +13,7 @@ namespace emiso {
             _listHandler = new ListHandler();
 
             _server->register_resource(path + "/json", _listHandler);
+            _server->register_resource("/v[1-9]+.[0-9]+" + path + "/json", _listHandler);
         }
 
         ContainerApi::~ContainerApi() {}

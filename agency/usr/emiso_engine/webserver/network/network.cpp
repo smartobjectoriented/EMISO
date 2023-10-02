@@ -13,6 +13,7 @@ namespace emiso {
             _listHandler = new ListHandler();
 
             _server->register_resource(path, _listHandler);
+            _server->register_resource("/v[1-9]+.[0-9]+" + path, _listHandler);
         }
 
         NetworkApi::~NetworkApi() {}
