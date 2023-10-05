@@ -11,8 +11,10 @@ add_executable(${PROJECT_NAME} emiso_engine.cpp
                                webserver/network/network.cpp
                                webserver/volume/volume.cpp
                                webserver/config/config.cpp
+                               daemon/image.cpp
+                               cli/cli.cpp
 )
 
-target_link_libraries(${PROJECT_NAME} httpserver jsoncpp)
+target_link_libraries(${PROJECT_NAME} httpserver jsoncpp readline)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION ${CMAKE_BINARY_DIR}/bin)
