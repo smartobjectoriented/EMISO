@@ -5,16 +5,16 @@
 #include <iostream>
 #include <map>
 #include <filesystem>
-
-
-#define EMISO_IMAGE_PATH  "/mnt/ME/"
+#include <string>
 
 namespace emiso {
 namespace daemon {
 
     struct ImageInfo {
+        std::string id;
         std::string name;
         size_t size;
+        uint64_t date;
     };
 
     class Image {
@@ -23,11 +23,17 @@ namespace daemon {
         Image();
         ~Image();
 
-        // Does not work !
         std::map<std::string, ImageInfo> info();
 
         // Remove image 'name' from the disk
         void remove(std::string name);
+    private:
+        // The ID is correspond to the MD5 checksum
+        std::string calculateId(const std::string& filePath);
+
+        // Get the date at which the image was create (Unix timestamp)
+        int createdTime(const std::string& filePath);
+
     };
 }
 }

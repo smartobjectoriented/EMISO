@@ -12,7 +12,6 @@ int main(int argc, char **argv)
     bool secure = false;
     bool interactive = false;
 
-    // while ((c = getopt(argc, argv, "p:k:c:sv?")) != EOF) {
     while ((c = getopt(argc, argv, "is")) != EOF) {
         switch (c) {
             case 'i':

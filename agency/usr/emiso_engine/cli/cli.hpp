@@ -20,9 +20,7 @@ namespace emiso {
         void start();
 
     private:
-    	const std::string _prompt = "(emiso)>> ";
     	daemon::Image _image;
-
 
     	void splitCmd(std::string const &str, const char delim, std::vector<std::string> &out);
 

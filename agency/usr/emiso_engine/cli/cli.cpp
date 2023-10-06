@@ -4,6 +4,8 @@
 
 #include "cli.hpp"
 
+#define EMISO_CLI_PROMPT "(emiso)>> "
+
 namespace emiso {
 
 Cli::Cli() {}
@@ -38,13 +40,20 @@ void Cli::handleHelpCommand() {
 
 void Cli::handleImagesCommand(std::vector<std::string> &tockens)
 {
+    // TODO - Add checks on 'tockens'
     if (tockens[1] == "info") {
         auto info = _image.info();
+
         for (auto it = info.begin(); it != info.end(); ++it) {
             std::string name = it->second.name;
             size_t size = it->second.size;
+            std::string id = it->second.id;
+            auto date = it->second.date;
 
-            std::cout << "name: " << name << ", size: " << size << std::endl;
+            std::cout << name << std::endl;
+            std::cout << "    Size: " << size <<  std::endl;
+            std::cout << "    ID: " << id << std::endl;
+            std::cout << "    date: " << date << std::endl;
         }
     } else if (tockens[1] == "rm") {
         // TODO - Add checks on 'tockens[2]'
@@ -58,7 +67,7 @@ void Cli::start()
 {
     std::cout << "Starting interactive mode" << std::endl;
     while (true) {
-       char* input = readline(_prompt.c_str());
+       char* input = readline(EMISO_CLI_PROMPT);
         if (!input) {
             break; // User pressed Ctrl+D (EOF)
         }

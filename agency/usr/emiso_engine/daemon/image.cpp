@@ -1,5 +1,11 @@
 
+#include <functional>
+#include <fstream>
+
 #include "image.hpp"
+
+#define EMISO_IMAGE_PATH     "/mnt/ME/"
+#define EMISO_IMAGE_ID_MODE  "md5"
 
 namespace emiso {
 namespace daemon {
@@ -7,6 +13,52 @@ namespace daemon {
 Image::Image() {};
 
 Image::~Image() {};
+
+namespace fs = std::filesystem;
+
+std::string Image::calculateId(const std::string& filePath)
+{
+    std::ifstream file(filePath, std::ios::binary);
+    if (!file) {
+        std::cerr << "Failed to open file '" << filePath << "'" << std::endl;
+        return "";
+    }
+
+    // Create an MD5 hash function
+    std::hash<std::string> md5Hash;
+
+    // Read the file content and calculate the MD5 checksum
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string fileContent = buffer.str();
+    std::string id = std::to_string(md5Hash(fileContent));
+
+    return id;
+}
+
+
+int Image::createdTime(const std::string& filePath)
+{
+    try {
+        // Check if the file exists and retrieve its status
+        if (fs::exists(filePath)) {
+            fs::file_time_type fileTime = fs::last_write_time(filePath);
+
+            // Convert file time to Unix timestamp (seconds since epoch)
+            auto fileTimestamp = std::chrono::duration_cast<std::chrono::seconds>(fileTime.time_since_epoch()).count();
+
+            return fileTimestamp;
+        } else {
+            std::cout << "[WARNING] File '" << filePath << "' does not exist." << std::endl;
+            return -1;
+        }
+
+    } catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "[ERROR]: " << e.what() << std::endl;
+        return -1;
+    }
+}
+
 
 std::map<std::string, ImageInfo> Image::info()
 {
@@ -21,6 +73,11 @@ std::map<std::string, ImageInfo> Image::info()
 
                 info.name = entry.path().filename();
                 info.size = std::filesystem::file_size(entry);
+                info.date = this->createdTime(EMISO_IMAGE_PATH + info.name);
+
+                auto id   = this->calculateId(EMISO_IMAGE_PATH + info.name);
+                std::string mode = EMISO_IMAGE_ID_MODE;
+                info.id   = mode + ":" + id;
 
                 imagesList[info.name] = info;
             }

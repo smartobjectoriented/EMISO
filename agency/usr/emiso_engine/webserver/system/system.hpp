@@ -4,9 +4,11 @@
 #include <iostream>
 #include <httpserver.hpp>
 #include <json/json.h>
-#include <sys/utsname.h>
 
-#include "../config/config.hpp"
+#include <emiso/utils.hpp>
+#include <emiso/config.hpp>
+
+#include "../../daemon/image.hpp"
 
 namespace emiso {
     namespace system {
@@ -23,13 +25,13 @@ namespace emiso {
             const std::shared_ptr<httpserver::http_response> render_HEAD(const httpserver::http_request &req) {
                 auto response = std::shared_ptr<httpserver::http_response>(new httpserver::string_response(""));
 
-                response->with_header("Api-Version",         config::api_version);
-                response->with_header("Builder-Version",     config::version);
-                if (config::experimental)
+                response->with_header("Api-Version",         EMISO_WEB_API_VERSION);
+                response->with_header("Builder-Version",     EMISO_VERSION);
+                if (EMISO_WEB_EXPERIMENTAL)
                     response->with_header("Docker-Experimental", "true");
                 else
                     response->with_header("Docker-Experimental", "false");
-                response->with_header("Swarm",               config::swarm);
+                response->with_header("Swarm",               EMISO_WEB_SWARM);
                 response->with_header("Cache-Control",       "no-cache, no-store, must-revalidate");
                 response->with_header("Pragma",              "no-cache");
 
@@ -43,13 +45,18 @@ namespace emiso {
             const std::shared_ptr<httpserver::http_response> render_GET(const httpserver::http_request &req) {
                 std::string payload_str = "";
                 Json::Value payload_json;
+                Utils& utils = Utils::getInstance();
+                auto config = utils.getInfo();
+                daemon::Image image;
 
-                payload_json["ID"]         = "2ff11d3f-c408-493e-b170-908919f68044"; // WARNING - should be unique
-                payload_json["Containers"] = 2;
-                payload_json["ContainersRunning"] = 1;
-                payload_json["ContainersPaused"] = 0;
-                payload_json["ContainersStopped"] = 0;
-                payload_json["Images"] = 3;
+                auto image_nr = image.info().size();
+
+                payload_json["ID"]         = "2ff11d3f-c408-493e-b170-908919f68044"; // To update next - user agency UUID
+                payload_json["Containers"] = 0; // To update next
+                payload_json["ContainersRunning"] = 0; // To update next
+                payload_json["ContainersPaused"] = 0; // To update next
+                payload_json["ContainersStopped"] = 0; // To update next
+                payload_json["Images"] = image_nr; // To update next
 
                 // WARNING - hardcoded values got from Docker answer of JMI PC
                 payload_json["Driver"] = "overlay2";
@@ -81,21 +88,20 @@ namespace emiso {
                 payload_json["BridgeNfIp6tables"] = "false";
                 payload_json["Debug"] = "false";
 
-                payload_json["SystemTime"] = "2017-08-08T20:28:29.06202363Z"; // GET REAL/current system time
+                payload_json["SystemTime"] = utils.getSystemTime();
                 payload_json["LoggingDriver"] = "json-file"; // WARNING - hardcoded values got from Docker answer of JMI PC
                 payload_json["CgroupDriver"] = "none";
                 payload_json["CgroupVersion"] = 1; // Default docker value
                 payload_json["NEventsListener"] = 0;
 
-                // Get these information for system !!!!!!
-                payload_json["KernelVersion"] = "5.10";
-                payload_json["OperatingSystem"] = "Buildroot 2022.02.5";
-                payload_json["OSVersion"]    = "-gd5d03f1ce-dirty";
-                payload_json["OSType"] = "linux";
-                payload_json["Architecture"] = "aarch64";
+                payload_json["KernelVersion"] = config.kernel_version;
+                payload_json["OperatingSystem"] = config.os;
+                payload_json["OSVersion"]    = config.os_version;
+                payload_json["OSType"] = config.os_type;
+                payload_json["Architecture"] = config.arch;
 
-                payload_json["NCPU"] = 1;
-                payload_json["MemTotal"] = 536870912; // To check !
+                payload_json["NCPU"] = 1;   // Get info from Agency ?
+                payload_json["MemTotal"] = 536870912; // Get info from Agency ?
                 payload_json["IndexServerAddress"] = "https://index.docker.io/v1/";
                 payload_json["RegistryConfig"] = Json::objectValue;
                 payload_json["GenericResources"] = Json::arrayValue;
@@ -105,7 +111,7 @@ namespace emiso {
                 payload_json["NoProxy"] =  "";   // use 'NO_PROXY' env variable
                 payload_json["Name"] =  "agency";   // Host name
                 payload_json["Labels"] = Json::arrayValue;
-                payload_json["ExperimentalBuild"] = config::experimental;
+                payload_json["ExperimentalBuild"] = EMISO_WEB_EXPERIMENTAL;
                 payload_json["ServerVersion"] = "24.0.5";
                 payload_json["ServerVersion"] = Json::objectValue;
                 payload_json["DefaultRuntime"] = "";
@@ -137,34 +143,29 @@ namespace emiso {
 
                 std::string payload_str = "";
                 Json::Value payload_json;
-                struct utsname unameData;
+                Utils& utils = Utils::getInstance();
                 int response_code = httpserver::http::http_utils::http_ok;
 
-                if (uname(&unameData) != -1) {
+                auto config = utils.getInfo();
 
-                    payload_json["Platform"]["name"] = config::plaftrom_name;
-                    payload_json["Components"][0]["name"]    = config::comp_name;
-                    payload_json["Components"][0]["version"] = config::version;
-                    payload_json["Version"]       = config::version;
-                    payload_json["ApiVersion"]    = config::api_version;
-                    payload_json["MinAPIVersion"] = config::api_version;
+                payload_json["Platform"]["name"] = EMISO_PLAFTROM_NAME;
+                payload_json["Components"][0]["name"]    = EMISO_WEB_COMP_NAME;
+                payload_json["Components"][0]["version"] = EMISO_VERSION;
+                payload_json["Version"]       = EMISO_VERSION;
+                payload_json["ApiVersion"]    = EMISO_WEB_API_VERSION;
+                payload_json["MinAPIVersion"] = EMISO_WEB_API_VERSION;
 
-                    // Get info directly from the system
-                    payload_json["Os"]   = unameData.sysname;
-                    payload_json["Arch"] = unameData.machine;
-                    payload_json["KernelVersion"] = unameData.release;
+                // Get info directly from the system
+                payload_json["Os"]   = config.os_type;
+                payload_json["Arch"] = config.arch;
+                payload_json["KernelVersion"] = config.kernel_version;
 
-                    payload_json["Experimental"] = config::experimental;
+                payload_json["Experimental"] = EMISO_WEB_EXPERIMENTAL;
 
-                    // not implemented yet !
-                    // payload_json["GitCommit"]
-                    // payload_json["GoVersion"]
-                    // payload_json["BuildTime"]
-
-                } else {
-                    response_code = httpserver::http::http_utils::http_internal_server_error;
-                    payload_json["message"] = "Something went wrong";
-                }
+                // not implemented yet !
+                // payload_json["GitCommit"]
+                // payload_json["GoVersion"]
+                // payload_json["BuildTime"]
 
                 Json::StreamWriterBuilder builder;
                 payload_str = Json::writeString(builder, payload_json);
