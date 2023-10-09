@@ -16,6 +16,8 @@
  *
  */
 
+/* Provide basic functions for the EMISO engine */
+
 #ifndef EMISO_UTILS_H
 #define EMISO_UTILS_H
 
@@ -40,10 +42,14 @@ namespace emiso {
             return instance;
         }
 
+        /* Return info in the platform */
         SystemInfo getInfo();
 
-        // Return the current system time, n  RFC 3339 format with nano-seconds
+        // Return the current system time, in RFC 3339 format with nano-seconds
         std::string getSystemTime();
+
+        // Return the Agency UUID of the Smart Object
+        std::string getAgencyUID();
 
     private:
         SystemInfo _info;

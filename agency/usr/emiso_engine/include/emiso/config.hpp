@@ -16,6 +16,8 @@
  *
  */
 
+/* Basic - Constant configuration for EMISO engine */
+
 #ifndef EMISO_CONFIG_H
 #define EMISO_CONFIG_H
 

@@ -27,6 +27,8 @@
 #include "network/network.hpp"
 #include "volume/volume.hpp"
 
+// DefaultHandler - used to print info for all paths not already registered to the
+//                  server
 class DefaultHandler : public httpserver::http_resource {
 public:
     const std::shared_ptr<httpserver::http_response> render(const httpserver::http_request& req) {
@@ -57,10 +59,10 @@ namespace emiso {
         // Destructor
         ~WebServer();
 
-        // Member function to start the server
+        // Start the server
         void start(bool blocking = false);
 
-        // Member function to stop the server
+        // Stop the server
         // void stop();
 
     private:

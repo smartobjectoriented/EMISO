@@ -24,10 +24,14 @@
 
 #include <emiso/utils.hpp>
 
+#define EMISO_OS_RELEASE_PATH "/etc/os-release"
+#define EMISO_AGENCY_UID_PATH "/sys/soo/agencyUID"
+
 namespace emiso {
 
 Utils::Utils ()
 {
+    // Retrieve platform info
     struct utsname unameData;
     if (uname(&unameData) != -1) {
         _info.kernel_version = unameData.release;
@@ -35,7 +39,8 @@ Utils::Utils ()
         _info.arch = unameData.machine;
     }
 
-    std::ifstream osReleaseFile("/etc/os-release");
+    // Retrieve OS information
+    std::ifstream osReleaseFile(EMISO_OS_RELEASE_PATH);
     if (osReleaseFile.is_open()) {
         std::string line;
         while (std::getline(osReleaseFile, line)) {
@@ -82,5 +87,28 @@ std::string Utils::getSystemTime()
     // Get the formatted time as a string
     return formattedTime.str();
 }
+
+
+std::string Utils::getAgencyUID()
+{
+    std::ifstream sysfsFile(EMISO_AGENCY_UID_PATH);
+    if (!sysfsFile.is_open()) {
+        std::cerr << "Failed to open sysfs file: " << EMISO_AGENCY_UID_PATH << std::endl;
+        // TODO - handle error
+    }
+
+    std::string fileContent;
+    std::getline(sysfsFile, fileContent); // Read the content of the file
+
+    sysfsFile.close(); // Close the file
+
+    if (sysfsFile.fail()) {
+        std::cerr << "Error occurred while reading the sysfs file." << std::endl;
+        // TODO - handle error
+    }
+
+    return fileContent;
+}
+
 
 } // emiso

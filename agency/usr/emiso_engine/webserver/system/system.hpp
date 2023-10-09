@@ -69,7 +69,7 @@ namespace emiso {
 
                 auto image_nr = image.info().size();
 
-                payload_json["ID"]         = "2ff11d3f-c408-493e-b170-908919f68044"; // To update next - user agency UUID
+                payload_json["ID"]         =  utils.getAgencyUID();
                 payload_json["Containers"] = 0; // To update next
                 payload_json["ContainersRunning"] = 0; // To update next
                 payload_json["ContainersPaused"] = 0; // To update next

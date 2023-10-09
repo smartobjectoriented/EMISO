@@ -16,6 +16,11 @@
  *
  */
 
+// EMISO Engine - Start the engine on port '2375'. It can be started in secure
+// mode (HTTPS/TLS) with '-s' option
+// The interactive mode ('-i' option) starts a cli interface instead of the web
+// server
+
 #include <iostream>
 #include <httpserver.hpp>
 
@@ -30,6 +35,7 @@ int main(int argc, char **argv)
     bool secure = false;
     bool interactive = false;
 
+    // TODO - Use C++ parameter handler lib !
     while ((c = getopt(argc, argv, "is")) != EOF) {
         switch (c) {
             case 'i':

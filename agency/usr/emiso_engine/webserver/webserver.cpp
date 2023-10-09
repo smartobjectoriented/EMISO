@@ -40,7 +40,7 @@ namespace emiso {
         _network   = new network::NetworkApi(_server);
         _volume    = new volume::VolumeApi(_server);
 
-        // Create the default path
+        // Create the default path - it responds to all paths
         _defaultHandler = new DefaultHandler();
         _server->register_resource("^/.*$",  _defaultHandler);
     }
