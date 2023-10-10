@@ -58,3 +58,17 @@ by:
 	:align: center
 
 	Engine Architecture
+
+*************
+cli interface
+*************
+
+The cli interface supports the following commands:
+
+	=====================  ==========================================
+	Cmd Name               Description
+	=====================  ==========================================
+	image info             Return information on the available images
+	image rm <IMAGE NAME>  Remove <IMAGE NAME>
+	=====================  ==========================================
+
