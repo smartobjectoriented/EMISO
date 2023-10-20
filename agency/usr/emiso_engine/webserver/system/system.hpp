@@ -66,8 +66,10 @@ namespace emiso {
                 Utils& utils = Utils::getInstance();
                 auto config = utils.getInfo();
                 daemon::Image image;
+                std::map<std::string, daemon::ImageInfo> info;
 
-                auto image_nr = image.info().size();
+                image.info(info);
+                auto image_nr = info.size();
 
                 payload_json["ID"]         =  utils.getAgencyUID();
                 payload_json["Containers"] = 0; // To update next
@@ -166,7 +168,7 @@ namespace emiso {
 
                 auto config = utils.getInfo();
 
-                payload_json["Platform"]["name"] = EMISO_PLAFTROM_NAME;
+                payload_json["Platform"]["name"] = EMISO_PLATFORM_NAME;
                 payload_json["Components"][0]["name"]    = EMISO_WEB_COMP_NAME;
                 payload_json["Components"][0]["version"] = EMISO_VERSION;
                 payload_json["Version"]       = EMISO_VERSION;

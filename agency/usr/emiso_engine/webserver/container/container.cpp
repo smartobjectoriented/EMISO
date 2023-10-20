@@ -24,7 +24,7 @@ namespace emiso {
 
         ContainerApi::ContainerApi(httpserver::webserver *server)
             : _server(server) {
-                std::string path  = "/containers";
+            std::string path  = "/containers";
 
             // Create routes and handlers
             _listHandler = new ListHandler();

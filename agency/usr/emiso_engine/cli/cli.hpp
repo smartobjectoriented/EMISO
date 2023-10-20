@@ -29,21 +29,21 @@ namespace emiso {
 
     class Cli {
     public:
-    	Cli();
+        Cli();
 
-		// Destructor
+        // Destructor
         ~Cli();
 
         void start();
 
     private:
-    	daemon::Image _image;
+        daemon::Image _image;
 
-    	void splitCmd(std::string const &str, const char delim, std::vector<std::string> &out);
+        void splitCmd(std::string const &str, const char delim, std::vector<std::string> &out);
 
-    	void handleHelloCommand();
-		void handleHelpCommand();
-		void handleImagesCommand(std::vector<std::string> &tockens);
+        void handleHelloCommand();
+        void handleHelpCommand();
+        void handleImagesCommand(std::vector<std::string> &tockens);
     };
 }
 

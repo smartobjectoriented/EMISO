@@ -35,8 +35,9 @@ namespace image {
             std::string payload_str = "";
             Json::Value payload_json;
 
-            // Retrive image info
-            auto info = _image.info();
+            // Retrieve image info
+            std::map<std::string, daemon::ImageInfo> info;
+            _image.info(info);
 
             unsigned idx = 0;
             for (auto it = info.begin(); it != info.end(); ++it) {

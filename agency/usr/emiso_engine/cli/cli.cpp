@@ -55,11 +55,13 @@ void Cli::handleHelpCommand() {
 }
 
 
-void Cli::handleImagesCommand(std::vector<std::string> &tockens)
+void Cli::handleImagesCommand(std::vector<std::string> &tokens)
 {
-    // TODO - Add checks on 'tockens'
-    if (tockens[1] == "info") {
-        auto info = _image.info();
+    std::map<std::string, daemon::ImageInfo> info;
+
+    // TODO - Add checks on 'tokens'
+    if (tokens[1] == "info") {
+         _image.info(info);
 
         for (auto it = info.begin(); it != info.end(); ++it) {
             std::string name = it->second.name;
@@ -72,11 +74,11 @@ void Cli::handleImagesCommand(std::vector<std::string> &tockens)
             std::cout << "    ID: " << id << std::endl;
             std::cout << "    date: " << date << std::endl;
         }
-    } else if (tockens[1] == "rm") {
-        // TODO - Add checks on 'tockens[2]'
-         _image.remove(tockens[2]);
+    } else if (tokens[1] == "rm") {
+        // TODO - Add checks on 'tokens[2]'
+         _image.remove(tokens[2]);
     } else {
-        std::cout << "[ERROR] image cmd '" << tockens[1] << "' is not supported" << std::endl;
+        std::cout << "[ERROR] image cmd '" << tokens[1] << "' is not supported" << std::endl;
     }
 }
 
@@ -97,17 +99,17 @@ void Cli::start()
             add_history(command.c_str());
         }
 
-        std::vector<std::string> tockens;
-        Cli::splitCmd(command, ' ', tockens);
+        std::vector<std::string> tokens;
+        Cli::splitCmd(command, ' ', tokens);
 
 
-        if (tockens[0] == "hello") {
+        if (tokens[0] == "hello") {
             Cli::handleHelloCommand();
-        } else if (tockens[0] == "help") {
+        } else if (tokens[0] == "help") {
             Cli::handleHelpCommand();
-        } else if (tockens[0] == "image") {
-            Cli::handleImagesCommand(tockens);
-        } else if (tockens[0] == "exit") {
+        } else if (tokens[0] == "image") {
+            Cli::handleImagesCommand(tokens);
+        } else if (tokens[0] == "exit") {
             break; // Exit the program
         } else {
             std::cout << "Unknown command. Type 'help' for a list of available commands." << std::endl;

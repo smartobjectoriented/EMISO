@@ -77,10 +77,8 @@ int Image::createdTime(const std::string& filePath)
 }
 
 
-std::map<std::string, ImageInfo> Image::info()
+void Image::info(std::map<std::string, ImageInfo> &imagesList)
 {
-    std::map<std::string, ImageInfo> imagesList;
-
     // Check if the folder exists
     if (std::filesystem::exists(EMISO_IMAGE_PATH) && std::filesystem::is_directory(EMISO_IMAGE_PATH)) {
         // Iterate through the files in the folder
@@ -102,8 +100,6 @@ std::map<std::string, ImageInfo> Image::info()
     } else {
         std::cerr << "Folder '" << EMISO_IMAGE_PATH << "' does not exist or is not a directory." << std::endl;
     }
-
-    return imagesList;
 }
 
 void Image::remove(std::string name)

@@ -22,7 +22,7 @@
 #define EMISO_CONFIG_H
 
 #define  EMISO_VERSION        "1.0"
-#define  EMISO_PLAFTROM_NAME  "emiso"
+#define  EMISO_PLATFORM_NAME  "emiso"
 
 // Webserver configuration
 #define  EMISO_WEB_COMP_NAME     "engine"

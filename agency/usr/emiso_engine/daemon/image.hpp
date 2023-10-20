@@ -40,15 +40,15 @@ namespace daemon {
         Image();
         ~Image();
 
-        std::map<std::string, ImageInfo> info();
+        void info(std::map<std::string, ImageInfo> &imagesList);
 
         // Remove image 'name' from the disk
         void remove(std::string name);
     private:
-        // The ID is correspond to the MD5 checksum
+        // The ID corresponds to the MD5 checksum
         std::string calculateId(const std::string& filePath);
 
-        // Get the date at which the image was create (Unix timestamp)
+        // Get the date at which the image was created (Unix timestamp)
         int createdTime(const std::string& filePath);
 
     };
