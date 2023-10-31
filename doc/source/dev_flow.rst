@@ -25,6 +25,7 @@ For a new version, the following steps are performed:
 *  A ``tag`` with the version number is created
 
 .. _gitFlow:
+
 .. uml::
    :align: center
 

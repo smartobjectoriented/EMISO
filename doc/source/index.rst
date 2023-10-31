@@ -23,6 +23,7 @@
    rootfs/rootfs
    docker/docker
    portainer/portainer
+   emiso_engine/emiso_engine
    user_guide
    logging
    board_issues

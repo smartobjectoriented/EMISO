@@ -6,7 +6,8 @@ BUILD_DIR=$SCRIPT_PATH/build
 
 # Create and initialize the associative array
 declare -A install_paths=(
-  ["root"]="fs/root/"
+    ["bin"]="fs/usr/local/bin/"
+    ["root"]="fs/root/"
 )
 
 # Deploy usr apps into the agency partition (second partition)
@@ -17,10 +18,10 @@ sudo cp -r ../usr/build/deploy/* fs/root/
 
 # Loop over installation paths
 for folder in "${!install_paths[@]}"; do
-	target_path=${install_paths[$folder]}
+    target_path=${install_paths[$folder]}
 
-	sudo mkdir -p $target_path
-	sudo cp -r $BUILD_DIR/$folder/* $target_path
+    sudo mkdir -p $target_path
+    sudo cp -r $BUILD_DIR/$folder/* $target_path >/dev/null 2>&1
 done
 
 sleep 1

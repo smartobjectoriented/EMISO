@@ -4,7 +4,7 @@
 
 cmake_minimum_required(VERSION 3.10)
 
-project(agency-usr LANGUAGES C)
+project(agency-usr LANGUAGES C CXX)
 
 option(WITH_LED_ACTIVITIES "LED activities during migration" OFF)
 
@@ -30,4 +30,5 @@ add_subdirectory(lib)
 
 add_subdirectory(wago_client)
 
-add_subdirectory(docker_images)
+# EMISO
+add_subdirectory(emiso_engine)
