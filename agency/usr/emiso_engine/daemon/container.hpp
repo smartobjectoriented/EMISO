@@ -16,27 +16,26 @@
  *
  */
 
-#include "container.hpp"
+#ifndef EMISO_DAEMON_CONTAINER_H
+#define EMISO_DAEMON_CONTAINER_H
+
+#include <string>
 
 namespace emiso {
+namespace daemon {
 
-    namespace container {
+    class Container {
 
-        ContainerApi::ContainerApi(httpserver::webserver *server)
-            : _server(server) {
-            std::string path  = "/containers";
+    public:
+        Container();
+        ~Container();
 
-            // Create routes and handlers
-            _listHandler   = new ListHandler();
-            _createHandler = new CreateHandler();
+        int create(std::string imageName);
 
-            _server->register_resource(path + "/json", _listHandler);
-            _server->register_resource("/v[1-9]+.[0-9]+" + path + "/json", _listHandler);
-            _server->register_resource(path + "/create", _createHandler);
-            _server->register_resource("/v[1-9]+.[0-9]+" + path + "/create", _createHandler);
-        }
+    private:
 
-        ContainerApi::~ContainerApi() {}
-
-    }
+    };
 }
+}
+
+#endif // EMISO_DAEMON_CONTAINER_H

@@ -16,27 +16,36 @@
  *
  */
 
+#include <iostream>
+#include <cstdlib>
+
 #include "container.hpp"
 
+#define EMISO_IMAGE_PATH     "/mnt/ME/"
+
 namespace emiso {
+namespace daemon {
 
-    namespace container {
+Container::Container() {};
 
-        ContainerApi::ContainerApi(httpserver::webserver *server)
-            : _server(server) {
-            std::string path  = "/containers";
+Container::~Container() {};
 
-            // Create routes and handlers
-            _listHandler   = new ListHandler();
-            _createHandler = new CreateHandler();
 
-            _server->register_resource(path + "/json", _listHandler);
-            _server->register_resource("/v[1-9]+.[0-9]+" + path + "/json", _listHandler);
-            _server->register_resource(path + "/create", _createHandler);
-            _server->register_resource("/v[1-9]+.[0-9]+" + path + "/create", _createHandler);
-        }
+int Container::create(std::string imageName)
+{
+    char cmd[80];
 
-        ContainerApi::~ContainerApi() {}
+    std::cout << "[EMISO] Creating container from '" << imageName << "'" << std::endl;
 
-    }
+    sprintf(cmd, "/root/injector %s", imageName.c_str());
+
+    std::cout << "[EMISO] injection cmd: " << cmd << std::endl;
+
+    int rc = std::system(cmd);
+
+    return 0;
 }
+
+
+} // daemon
+} // emiso
