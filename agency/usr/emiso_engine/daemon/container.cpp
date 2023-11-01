@@ -18,6 +18,11 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <fcntl.h>
+
+#include <sys/ioctl.h>
+#include <unistd.h>
+#include <soo/uapi/soo.h>
 
 #include "container.hpp"
 
@@ -29,6 +34,62 @@ namespace daemon {
 Container::Container() {};
 
 Container::~Container() {};
+
+// Convert a ME state into the Docker Container state
+//      valid container states are: running, paused, exited, restarting, dead
+std::string Container::meToDockerState(int meState)
+{
+    switch (meState) {
+    case ME_state_booting:
+        return "booting";   // WARNING - not a valid Docker state
+    case ME_state_preparing:
+        return "booting";    // WARNING - not a valid Docker state
+    case ME_state_living:
+        return "running";
+    case ME_state_suspended:
+        return "paused";
+    case ME_state_migrating:
+        return "error ";
+    case ME_state_dormant:
+        return "paused";
+    case ME_state_killed:
+        return "dead";
+    case ME_state_terminated:
+        return "exited";
+    case ME_state_dead:
+        return "dead";
+    }
+
+    return "(n/a)";
+}
+
+void Container::info(std::map<int, ContainerInfo> &containerList)
+{
+    int i, fd;
+    ME_id_t id_array[MAX_ME_DOMAINS];
+    agency_ioctl_args_t args;
+
+    fd = open("/dev/soo/core", O_RDWR);
+    // assert(fd_core > 0);
+
+    args.buffer = &id_array;
+    ioctl(fd, AGENCY_IOCTL_GET_ME_ID_ARRAY, (unsigned long) &args);
+
+    close(fd);
+
+    for (i = 0; i < MAX_ME_DOMAINS; i++) {
+        if (id_array[i].state != ME_state_dead) {
+            ContainerInfo info;
+
+            // Should it be 'i+2' ??
+            info.id    = i; /* Use the slot number as Container ID */
+            info.name  = id_array[i].name;
+            info.state = this->meToDockerState(id_array[i].state);
+
+            containerList[i] = info;
+        }
+    }
+}
 
 
 int Container::create(std::string imageName)

@@ -27,6 +27,7 @@
 #include <emiso/config.hpp>
 
 #include "../../daemon/image.hpp"
+#include "../../daemon/container.hpp"
 
 namespace emiso {
     namespace system {
@@ -65,15 +66,22 @@ namespace emiso {
                 Json::Value payload_json;
                 Utils& utils = Utils::getInstance();
                 auto config = utils.getInfo();
-                daemon::Image image;
+                daemon::Image     image;
                 std::map<std::string, daemon::ImageInfo> info;
+                daemon::Container container;
+                std::map<int, daemon::ContainerInfo> containerInfo;
 
+                // Retrieve images info
                 image.info(info);
                 auto image_nr = info.size();
 
+                // Retrieve container info
+                container.info(containerInfo);
+                auto containerNr = containerInfo.size();
+
                 payload_json["ID"]         =  utils.getAgencyUID();
-                payload_json["Containers"] = 0; // To update next
-                payload_json["ContainersRunning"] = 0; // To update next
+                payload_json["Containers"] = containerNr; // To update next
+                payload_json["ContainersRunning"] = containerNr; // To update next
                 payload_json["ContainersPaused"] = 0; // To update next
                 payload_json["ContainersStopped"] = 0; // To update next
                 payload_json["Images"] = image_nr; // To update next

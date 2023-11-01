@@ -20,9 +20,16 @@
 #define EMISO_DAEMON_CONTAINER_H
 
 #include <string>
+#include <map>
 
 namespace emiso {
 namespace daemon {
+
+    struct ContainerInfo {
+        int id;
+        std::string name;
+        std::string state;
+    };
 
     class Container {
 
@@ -30,9 +37,11 @@ namespace daemon {
         Container();
         ~Container();
 
+        void info(std::map<int, ContainerInfo> &containerList);
         int create(std::string imageName);
 
     private:
+        std::string meToDockerState(int meState);
 
     };
 }

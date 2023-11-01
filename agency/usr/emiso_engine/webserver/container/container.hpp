@@ -27,94 +27,135 @@
 
 
 namespace emiso {
+namespace container {
 
-    namespace container {
+    class ListHandler : public httpserver::http_resource {
+    public:
 
-        class ListHandler : public httpserver::http_resource {
-        public:
+        const std::shared_ptr<httpserver::http_response> render_GET(const httpserver::http_request &req) {
+            std::string payload_str = "";
+            Json::Value payload_json;
 
-            const std::shared_ptr<httpserver::http_response> render_GET(const httpserver::http_request &req) {
-                std::string payload_str = "";
-                Json::Value payload_json;
+            // Retrieve container info
+            std::map<int, daemon::ContainerInfo> info;
+            _container.info(info);
 
+            if (info.empty()) {
                 payload_json = Json::arrayValue;
+            } else {
 
-                Json::StreamWriterBuilder builder;
-                payload_str = Json::writeString(builder, payload_json);
+               unsigned idx = 0;
+               for (auto it = info.begin(); it != info.end(); ++it) {
+                    payload_json[idx]["Id"]       = it->second.id;
+                    payload_json[idx]["Names"][0] = "/" + it->second.name;
+                    payload_json[idx]["Image"]    = it->second.name + ":latest";
+                    payload_json[idx]["ImageID"]  = "md5:14044887700990924592";   // Compute the image ID as in image List (hardcoded value for refso3) !
+                    payload_json[idx]["Command"]  = "/inject";
 
-                auto response = std::make_shared<httpserver::string_response>(payload_str,
+                    payload_json[idx]["Created"] = 1694161384;  // TODO Add support to get container creation time !
+                    payload_json[idx]["Ports"]   = Json::arrayValue;
+                    payload_json[idx]["Labels"]  = Json::objectValue;
+                    payload_json[idx]["State"]   = it->second.state;
+                    payload_json[idx]["Status"]  = it->second.state;
+
+                    // Network setting as the values obtained on the test PC
+                    payload_json[idx]["HostConfig"]["NetworkMode"] = "bridge";
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["IPAMConfig"] = Json::objectValue;
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["Links"]      = Json::Value::null;
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["Aliases"]    = Json::Value::null;
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["NetworkID"]  = "59125e01bc5d820b2cf1a2e19760b11f25678e098bb08df6d3337ef18403ca56",
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["EndpointID"] = "";
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["Gateway"]    = "";
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["IPAddress"]  = "";
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["IPPrefixLen"] = 0;
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["IPv6Gateway"] = "";
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["GlobalIPv6Address"] = "";
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["GlobalIPv6PrefixLen"] = 0;
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["MacAddress"] = "";
+                    payload_json[idx]["NetworkSettings"]["Networks"]["bridge"]["DriverOpts"] = Json::Value::null;
+                    payload_json[idx]["Mounts"] =   Json::arrayValue;
+
+                   idx++;
+               }
+            }
+
+            Json::StreamWriterBuilder builder;
+            payload_str = Json::writeString(builder, payload_json);
+            auto response = std::make_shared<httpserver::string_response>(payload_str,
                            httpserver::http::http_utils::http_ok, "application/json");
-                return response;
-            }
-        };
+            return response;
+        }
+
+    private:
+        daemon::Container _container;
+    };
 
 
-        class CreateHandler : public httpserver::http_resource {
-        public:
+    class CreateHandler : public httpserver::http_resource {
+    public:
 
-            const std::shared_ptr<httpserver::http_response> render_POST(const httpserver::http_request &req) {
-                std::string payload_str = "";
-                Json::Value payload_json;
-
-
-                // Extract info from body
-                const std::string requestBody = req.get_content();
-
-                Json::Value jsonData;
-                Json::Reader jsonReader;
+        const std::shared_ptr<httpserver::http_response> render_POST(const httpserver::http_request &req) {
+            std::string payload_str = "";
+            Json::Value payload_json;
 
 
-                if (!jsonReader.parse(requestBody, jsonData)) {
-                    // JSON parsing error
-                    // Return error message
-                }
+            // Extract info from body
+            const std::string requestBody = req.get_content();
 
-                std::string imageName = jsonData["Image"].asString();
+            Json::Value jsonData;
+            Json::Reader jsonReader;
 
-                // Remove the image version of the name
-                size_t colonPosition = imageName.find(':');
-                imageName = imageName.substr(0, colonPosition);
 
-                std::cout << "[Webserver] Create container based on '" << imageName << "' name" << std::endl;
-
-                _container.create(imageName);
-
-                // build the response
-                payload_json["Id"] = "12345";
-                payload_json["Warnings"] = Json::arrayValue;
-
-                Json::StreamWriterBuilder builder;
-                payload_str = Json::writeString(builder, payload_json);
-
-                auto response = std::make_shared<httpserver::string_response>(payload_str,
-                           httpserver::http::http_utils::http_created, "application/json");
-                return response;
+            if (!jsonReader.parse(requestBody, jsonData)) {
+                // JSON parsing error
+                // Return error message
             }
 
-        private:
-            daemon::Container _container;
+            std::string imageName = jsonData["Image"].asString();
 
-        };
+            // Remove the image version of the name
+            size_t colonPosition = imageName.find(':');
+            imageName = imageName.substr(0, colonPosition);
 
-        class ContainerApi {
-        public:
-            // Constructor
-            ContainerApi(httpserver::webserver *server);
+            std::cout << "[Webserver] Create container based on '" << imageName << "' name" << std::endl;
 
-            // Destructor
-            ~ContainerApi();
+            _container.create(imageName);
 
-        private:
-            httpserver::webserver *_server;
+            // build the response
+            payload_json["Id"] = "12345";
+            payload_json["Warnings"] = Json::arrayValue;
 
-            // Handler for the different 'container' routes
-            ListHandler *_listHandler;
-            CreateHandler *_createHandler;
+            Json::StreamWriterBuilder builder;
+            payload_str = Json::writeString(builder, payload_json);
 
-        };
+            auto response = std::make_shared<httpserver::string_response>(payload_str,
+                       httpserver::http::http_utils::http_created, "application/json");
+            return response;
+        }
 
-    }
+    private:
+        daemon::Container _container;
 
-}
+    };
+
+    class ContainerApi {
+    public:
+        // Constructor
+        ContainerApi(httpserver::webserver *server);
+
+        // Destructor
+        ~ContainerApi();
+
+    private:
+        httpserver::webserver *_server;
+
+        // Handler for the different 'container' routes
+        ListHandler *_listHandler;
+        CreateHandler *_createHandler;
+
+    };
+
+} // container
+} // emiso
 
 #endif /* EMISO_CONTAINER_H */

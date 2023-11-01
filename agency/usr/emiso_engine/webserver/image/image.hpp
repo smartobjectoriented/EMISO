@@ -42,7 +42,7 @@ namespace image {
             unsigned idx = 0;
             for (auto it = info.begin(); it != info.end(); ++it) {
 
-                payload_json[idx]["ID"]          = it->second.id;
+                payload_json[idx]["Id"]          = it->second.id;
                 payload_json[idx]["ParentId"]    = "";
                 payload_json[idx]["RepoTags"][0] = it->second.name;
                 payload_json[idx]["Created"]     = it->second.date;
