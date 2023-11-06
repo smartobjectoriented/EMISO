@@ -35,6 +35,8 @@ namespace image {
             std::string payload_str = "";
             Json::Value payload_json;
 
+            std::cout << "[WEBERVER] '" << req.get_path()  << "' (" << req.get_method() << ") called" << std::endl;
+
             // Retrieve image info
             std::map<std::string, daemon::ImageInfo> info;
             _image.info(info);

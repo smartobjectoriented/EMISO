@@ -36,12 +36,16 @@ namespace emiso {
         public:
 
             const std::shared_ptr<httpserver::http_response> render_GET(const httpserver::http_request &req) {
+                std::cout << "[WEBERVER] '" << req.get_path()  << "' (" << req.get_method() << ") called" << std::endl;
+
                 // Respond is a simple 'OK'
                 auto response = std::make_shared<httpserver::string_response>("OK");
                 return response;
             }
 
             const std::shared_ptr<httpserver::http_response> render_HEAD(const httpserver::http_request &req) {
+                std::cout << "[WEBERVER] '" << req.get_path()  << "' (" << req.get_method() << ") called" << std::endl;
+
                 auto response = std::shared_ptr<httpserver::http_response>(new httpserver::string_response(""));
 
                 response->with_header("Api-Version",         EMISO_WEB_API_VERSION);
@@ -62,6 +66,8 @@ namespace emiso {
         public:
 
             const std::shared_ptr<httpserver::http_response> render_GET(const httpserver::http_request &req) {
+                std::cout << "[WEBERVER] '" << req.get_path()  << "' (" << req.get_method() << ") called" << std::endl;
+
                 std::string payload_str = "";
                 Json::Value payload_json;
                 Utils& utils = Utils::getInstance();
@@ -168,6 +174,7 @@ namespace emiso {
         public:
 
             const std::shared_ptr<httpserver::http_response> render_GET(const httpserver::http_request &req) {
+                std::cout << "[WEBERVER] '" << req.get_path()  << "' (" << req.get_method() << ") called" << std::endl;
 
                 std::string payload_str = "";
                 Json::Value payload_json;

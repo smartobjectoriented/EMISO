@@ -36,6 +36,8 @@ namespace container {
             std::string payload_str = "";
             Json::Value payload_json;
 
+            std::cout << "[WEBERVER] '" << req.get_path()  << "' (" << req.get_method() << ") called" << std::endl;
+
             // Retrieve container info
             std::map<int, daemon::ContainerInfo> info;
             _container.info(info);
@@ -46,7 +48,7 @@ namespace container {
 
                unsigned idx = 0;
                for (auto it = info.begin(); it != info.end(); ++it) {
-                    payload_json[idx]["Id"]       = it->second.id;
+                    payload_json[idx]["Id"]       =  std::to_string(it->second.id);
                     payload_json[idx]["Names"][0] = "/" + it->second.name;
                     payload_json[idx]["Image"]    = it->second.name + ":latest";
                     payload_json[idx]["ImageID"]  = "md5:14044887700990924592";   // Compute the image ID as in image List (hardcoded value for refso3) !
@@ -97,6 +99,8 @@ namespace container {
         const std::shared_ptr<httpserver::http_response> render_POST(const httpserver::http_request &req) {
             std::string payload_str = "";
             Json::Value payload_json;
+
+            std::cout << "[WEBERVER] '" << req.get_path()  << "' (" << req.get_method() << ") called" << std::endl;
 
 
             // Extract info from body
